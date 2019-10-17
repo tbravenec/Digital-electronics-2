@@ -23,7 +23,7 @@
 /* Typedef -----------------------------------------------------------*/
 /* Define ------------------------------------------------------------*/
 #define LED_GREEN   PB5
-#define LED_RED     PB0
+#define LED_BLUE    PB0
 
 /* Variables ---------------------------------------------------------*/
 /* Function prototypes -----------------------------------------------*/
@@ -35,14 +35,16 @@ int main(void)
     GPIO_config_output(&DDRB, LED_GREEN);
     GPIO_write(&PORTB, LED_GREEN, PIN_LOW);
     /* LED_RED */
-    // TODO: Configure red LED
+    GPIO_config_output(&DDRB, LED_BLUE);
+    GPIO_write(&PORTB, LED_BLUE, PIN_LOW);
 
     /* Set Timer0 */
     TIM_config_prescaler(TIM0, TIM_PRESC_1024);
     TIM_config_interrupt(TIM0, TIM_OVERFLOW_ENABLE);
 
     /* Set Timer1 */
-    // TODO: Configure Timer1 clock source and enable overflow interrupt
+    TIM_config_prescaler(TIM1, TIM_PRESC_256);
+    TIM_config_interrupt(TIM1, TIM_OVERFLOW_ENABLE);
 
     /* Enable interrupts by setting the global interrupt mask */
     sei();
@@ -59,14 +61,13 @@ int main(void)
  */
 ISR(TIMER0_OVF_vect)
 {
-    // TODO: Toggle green LED
+    GPIO_toggle(&PORTB, LED_GREEN);
 }
 
 /**
  *  Brief: Timer/Counter1 overflow interrupt routine. Toggle red LED.
  */
-/*ISR(TIMER1_OVF_vect)
+ISR(TIMER1_OVF_vect)
 {
-    // TODO: Toggle red LED
+    GPIO_toggle(&PORTB, LED_BLUE);
 }
-*/
