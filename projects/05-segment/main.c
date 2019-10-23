@@ -43,8 +43,8 @@ int main(void)
     GPIO_write(&PORTB, LED_D1, PIN_LOW);
 
     /* Pin Change Interrupts 11:9 */
-    PCICR |= _BV(PCIF1); 
-    PCMSK1 |= (_BV(PC1) | _BV(PC2) | _BV(PC3));
+    PCICR |= _BV(PCIE1); 
+    PCMSK1 |= (_BV(PCINT11) | _BV(PCINT10) | _BV(PCINT9));
 
     /* 7-segment display interface */
     GPIO_config_output(&DDRB, SEGMENT_DATA);
@@ -67,5 +67,5 @@ int main(void)
  */
 ISR(PCINT1_vect)
 {
-    GPIO_toggle(&PORTB, PB5);
+    GPIO_toggle(&PORTB, LED_D1);
 }
