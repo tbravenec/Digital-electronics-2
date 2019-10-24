@@ -69,12 +69,12 @@ void SEG_putc(uint8_t digit,
 
     /* Put 1st byte to serial data */
     for (i = 0; i < 8; i++) {
-        GPIO_write(&PORTB, SEGMENT_DATA, bit_is_set(digit, 7-i));
+        GPIO_write(&PORTB, SEGMENT_DATA, ((digit & _BV(7 - i)) >> (7 - i)));
         SEG_toggle_clk();
     }
     /* Put 2nd byte to serial data */
     for (i = 0; i < 8; i++) {
-        GPIO_write(&PORTB, SEGMENT_DATA, bit_is_set(position, 7-i));
+        GPIO_write(&PORTB, SEGMENT_DATA, ((position & _BV(7 - i)) >> (7 - i)));
         SEG_toggle_clk();
     }
 

@@ -28,6 +28,7 @@
 #define BTN_S3          PC3 // PCINT 11
 
 /* Variables ---------------------------------------------------------*/
+volatile uint16_t value = 0;
 /* Function prototypes -----------------------------------------------*/
 
 /* Functions ---------------------------------------------------------*/
@@ -51,12 +52,19 @@ int main(void)
     GPIO_config_output(&DDRD, SEGMENT_CLK);
     GPIO_config_output(&DDRD, SEGMENT_LATCH);
 
+    /* Timer 0 configuration for segment switching*/
+    TIM_config_prescaler(TIM0, TIM_PRESC_256);
+    TIM_config_interrupt(TIM0, TIM_OVERFLOW_ENABLE);
+
+    /* Timer 1 configuration for value incrementation */
+    TIM_config_prescaler(TIM1, TIM_PRESC_8);
+    TIM_config_interrupt(TIM1, TIM_OVERFLOW_ENABLE);
+
     /* Enable interrupts by setting the global interrupt mask */
     sei();
 
     /* Infinite loop */
     for (;;) {
-        SEG_putc(5, 0);
     }
 
     return (0);
@@ -68,4 +76,48 @@ int main(void)
 ISR(PCINT1_vect)
 {
     GPIO_toggle(&PORTB, LED_D1);
+}
+
+ISR(TIMER0_OVF_vect)
+{
+    static uint8_t segment = 0;
+    segment++;
+    if(segment >= 4)
+    {
+        segment = 0;
+    }
+
+    uint8_t ones, tens, hundreds, thousands;
+
+    ones = value % 10;
+    tens = (value / 10) % 10;
+    hundreds = (value / 100) % 10;
+    thousands = value / 1000;
+
+    switch(segment)
+    {
+        case 0:
+            SEG_putc(ones, segment);
+            break;
+        case 1:
+            SEG_putc(tens, segment);
+            break;
+        case 2:
+            SEG_putc(hundreds, segment);
+            break;
+        case 3:
+            SEG_putc(thousands, segment);
+            break;
+        default:
+            SEG_putc(0, segment);
+    }
+}
+
+ISR(TIMER1_OVF_vect)
+{
+    value++;
+    if (value > 9999)
+    {
+        value = 0;
+    }
 }
