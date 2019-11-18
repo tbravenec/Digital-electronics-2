@@ -59,7 +59,7 @@ int main(void)
 
     // Put strings to ringbuffer for transmitting via UART.
     uart_puts("\r\n---TWI scanner---");
-//    uart_puts("\r\n     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f");
+    uart_puts("\r\n     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f");
 
     // Infinite loop
     for (;;) {
@@ -87,37 +87,66 @@ void fsm_twi_scanner(void)
     uint8_t status;
     char uart_string[3];
 
-    switch (current_state) {
-    case IDLE_STATE:
-        if (addr < 128) {
-            itoa(addr, uart_string, 16);
-            uart_puts("\r\n");
-            uart_puts(uart_string);
-            current_state = TRY_STATE;
-        }
-        break;
+    switch (current_state) 
+    {
+        case IDLE_STATE:
+            if (addr % 16 == 0 && addr < 128)
+            {
+                uart_puts("\n\r");
+                itoa((addr / 16) * 16, uart_string, 16);
+                if (addr / 16 == 0)
+                {
+                    uart_putc('0');
+                }
+                
+                uart_puts(uart_string);
+                uart_puts(":");
+            }
 
-    // Transmit TWI slave address and check status
-    case TRY_STATE:
-        status = twi_start((addr<<1) + TWI_WRITE);
-        twi_stop();
+            if (addr < 8)
+            {
+                uart_puts(" \033[31mRA\033[0m");
+                addr++;
+                current_state = IDLE_STATE;
+            }
+            else if (addr < 120) 
+            {
+                itoa(addr, uart_string, 16);
+                current_state = TRY_STATE;
+            }
+            else if (addr < 128) 
+            {
+                uart_puts(" \033[31mRA\033[0m");
+                addr++;
+                current_state = IDLE_STATE;
+            }
+            break;
 
-        if (status == 0) {
-            current_state = ACK_STATE;
-        } else {
+        // Transmit TWI slave address and check status
+        case TRY_STATE:
+            status = twi_start((addr<<1) + TWI_WRITE);
+            twi_stop();
+
+            if (status == 0) 
+            {
+                current_state = ACK_STATE;
+            } 
+            else 
+            {
+                addr++;
+                current_state = IDLE_STATE;
+                uart_puts(" --");
+            }
+            break;
+
+        // Slave ACK received
+        case ACK_STATE:
+            uart_puts(" \033[32mOK\033[0m");
             addr++;
             current_state = IDLE_STATE;
-        }
-        break;
+            break;
 
-    // Slave ACK received
-    case ACK_STATE:
-        uart_puts(" OK");
-        addr++;
-        current_state = IDLE_STATE;
-        break;
-
-    default:
-        current_state = IDLE_STATE;
+        default:
+            current_state = IDLE_STATE;
     }
 }
