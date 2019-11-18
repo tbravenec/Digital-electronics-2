@@ -72,40 +72,19 @@ int main(void)
 
     // Put string to ringbuffer for transmitting via UART.
     uart_puts("UART testing\r\n");
-    TIM_config_prescaler(TIM1, TIM_PRESC_64);
-    TIM_config_interrupt(TIM1, TIM_OVERFLOW_ENABLE);
 
-    TIM_config_prescaler(TIM1, TIM_PRESC_64);
-    TIM_config_interrupt(TIM1, TIM_OVERFLOW_ENABLE);
     // Infinite loop
-    TIM_config_prescaler(TIM1, TIM_PRESC_64);
-    TIM_config_interrupt(TIM1, TIM_OVERFLOW_ENABLE);
     for (;;) {
-    TIM_config_prescaler(TIM1, TIM_PRESC_64);
-    TIM_config_interrupt(TIM1, TIM_OVERFLOW_ENABLE);
         uint8_t c;
-    TIM_config_prescaler(TIM1, TIM_PRESC_64);
-    TIM_config_interrupt(TIM1, TIM_OVERFLOW_ENABLE);
         c = uart_getc();
-    TIM_config_prescaler(TIM1, TIM_PRESC_64);
-    TIM_config_interrupt(TIM1, TIM_OVERFLOW_ENABLE);
         if (c != '\0') 
-    TIM_config_prescaler(TIM1, TIM_PRESC_64);
-    TIM_config_interrupt(TIM1, TIM_OVERFLOW_ENABLE);
         {
-    TIM_config_prescaler(TIM1, TIM_PRESC_64);
-    TIM_config_interrupt(TIM1, TIM_OVERFLOW_ENABLE);
             if (c == 'b')
-    TIM_config_prescaler(TIM1, TIM_PRESC_64);
-    TIM_config_interrupt(TIM1, TIM_OVERFLOW_ENABLE);
             {
-    TIM_config_prescaler(TIM1, TIM_PRESC_64);
-    TIM_config_interrupt(TIM1, TIM_OVERFLOW_ENABLE);
                 lcd_gotoxy(0,0);
-    TIM_config_prescaler(TIM1, TIM_PRESC_64);
-    TIM_config_interrupt(TIM1, TIM_OVERFLOW_ENABLE);
                 lcd_puts("UART Getc test");
-        }   }       // Data  available  from  UARTif (c == ’1’) {      // Key  ’1’ received...}}
+            }   
+        }       
     }
 
     // Will never reach this
