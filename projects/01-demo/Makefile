@@ -86,7 +86,7 @@ size : $(TARGET).elf
 # https://www.nongnu.org/avrdude/user-manual/avrdude_4.html
 flash : $(TARGET).hex
 	@echo "Flashing program memory\t$<"
-	@$(AVRDUDE) -p $(MCU_DUDE) -c arduino -D -V -u -q -U flash:w:$(TARGET).hex:i -P $(USBPORT)
+	@$(AVRDUDE) -p $(MCU_DUDE) -c $(PROGRAMMER) -D -V -u -q -U flash:w:$(TARGET).hex:i -P $(USBPORT)
 
 ## Clean rule
 clean :
